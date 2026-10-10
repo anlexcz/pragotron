@@ -35,7 +35,7 @@ Build vytvoří složku `dist/`. GitHub Actions spouští kontroly a přikládá
 
 Nahraj **obsah** `dist/` na statický hosting, například do adresáře webu na Wedosu. Ponech adresáře `src/` a `assets/` a jejich soubory pohromadě. Funguje také pod podadresářem — cesty jsou relativní. Server musí obsluhovat `.js` jako JavaScript a fonty jako binární soubory. Pro sdílení přes systémové menu je potřeba HTTPS a podpora Web Share API.
 
-Alternativně lze v GitHub Pages zvolit nasazování ze složky `/` větve `main`; produkční soubory jsou i v kořeni repozitáře. Toto nastavení není automaticky zapnuté touto implementací. CI aplikaci kontroluje, ale samo ji veřejně nenasazuje.
+Oficiální hosting je **GitHub Pages**: https://anlexcz.github.io/pragotron/ . Workflow `.github/workflows/pages.yml` po změně větve `main` spustí kontroly, sestaví `dist/` a nasadí ji. V nastavení repozitáře **Settings → Pages → Build and deployment → Source** vyber **GitHub Actions**. První zapnutí Pages vyžaduje oprávnění správce repozitáře; běžný `GITHUB_TOKEN` ho sám nezapne. Pokud první běh skončil chybou kvůli vypnutým Pages, po zapnutí ho znovu spusť přes **Actions → Deploy Pragotron to GitHub Pages → Run workflow**.
 
 ## Export a Stories
 
