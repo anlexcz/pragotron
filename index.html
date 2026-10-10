@@ -17,8 +17,13 @@
   </header>
   <div class="intro"><h1>Napiš to. Překlop to.</h1><p>Od nádražní tabule po vlastní vzkaz. Vyber vzhled a stáhni obrázek nebo animaci.</p></div>
   <main class="workspace">
+    <section class="preview-column" aria-label="Náhled tabule">
+        <div class="preview-heading"><span><span class="status-dot"></span> NÁHLED TABULE</span><span id="dimensions">Načítám písmo…</span></div>
+        <div class="preview-stage" id="preview-stage"><div class="stage-corner top-left" aria-hidden="true"></div><div class="stage-corner bottom-right" aria-hidden="true"></div><canvas id="preview" aria-label="Náhled pragotronu s vlastním textem" role="img"></canvas><p id="empty-note" hidden>Napiš text a tabule ožije.</p></div>
+        <div class="preview-toolbar"><button id="play" class="play-button" type="button" disabled><span aria-hidden="true">▶</span> Přehrát přetočení</button><button id="stop" class="text-button" type="button" disabled>Výsledný stav</button><span id="duration"></span></div>
+    </section>
     <section class="editor" aria-label="Nastavení tabule">
-      <details class="control-section" open>
+      <details name="settings" class="control-section" open>
         <summary><span class="section-number">01</span> Text a tabule <span class="expand" aria-hidden="true">+</span></summary>
         <div class="section-body">
           <label for="text">Co má tabule říkat?</label>
@@ -36,7 +41,7 @@
           <div id="font-sample" class="font-sample">ĚŠČŘŽÝÁÍÉŮÚ · 0123456789</div>
         </div>
       </details>
-      <details class="control-section" open>
+      <details name="settings" class="control-section">
         <summary><span class="section-number">02</span> Barvy a mechanika <span class="expand" aria-hidden="true">+</span></summary>
         <div class="section-body">
           <div class="field"><label for="theme">Vzhled destiček</label><select id="theme" data-field="theme"><option value="black">Nádražní černá</option><option value="cream">Krémová</option><option value="blue">Modrá</option><option value="yellow">Žlutá</option><option value="green">Tmavě zelená</option><option value="custom">Vlastní barva</option></select></div>
@@ -47,7 +52,11 @@
             <button type="button" data-theme="yellow" style="--swatch:#e5c331" aria-label="Žlutá"></button>
             <button type="button" data-theme="green" style="--swatch:#1b4032" aria-label="Tmavě zelená"></button>
           </div>
-          <div class="color-fields"><label>Destičky <input aria-label="Barva destiček" type="color" data-field="panelColor"></label><label>Text <input aria-label="Barva textu" type="color" data-field="textColor"></label></div>
+          <div class="color-fields">
+            <div class="color-field"><label for="panel-hex">Destičky</label><div class="color-inputs"><input aria-label="Barva destiček" type="color" data-field="panelColor"><input id="panel-hex" class="hex-input" type="text" data-hex="panelColor" placeholder="#171717" maxlength="7" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="hex-hint"></div></div>
+            <div class="color-field"><label for="text-hex">Text</label><div class="color-inputs"><input aria-label="Barva textu" type="color" data-field="textColor"><input id="text-hex" class="hex-input" type="text" data-hex="textColor" placeholder="#F4F1E7" maxlength="7" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="hex-hint"></div></div>
+          </div>
+          <p class="hint" id="hex-hint">Barvu vyber nebo zadej HEX, třeba #ED5E32. Funguje i #FFF.</p>
           <label class="check"><input id="auto-color" type="checkbox"> Automaticky čitelná barva textu</label>
           <p id="contrast-note" class="hint" hidden></p>
           <div class="checkbox-row"><label><input type="checkbox" data-field="frame"> Rámeček tabule</label><label><input type="checkbox" data-field="shadow"> Stín u spáry</label><label><input type="checkbox" data-field="patina"> Jemná patina</label></div>
@@ -62,19 +71,19 @@
           </div></details>
         </div>
       </details>
-      <details class="control-section">
+      <details name="settings" class="control-section">
         <summary><span class="section-number">03</span> Plátno a kompozice <span class="expand" aria-hidden="true">+</span></summary>
         <div class="section-body">
           <div class="field"><label for="canvas-format">Formát obrázku</label><select id="canvas-format" data-field="canvas"><option value="crop">Oříznout na tabuli</option><option value="stories">Stories · 1080 × 1920</option><option value="square">Čtverec · 1080 × 1080</option><option value="landscape">Na šířku · 1920 × 1080</option><option value="custom">Vlastní rozměry</option></select></div>
           <div id="custom-size" class="two-fields"><label>Šířka v px <input type="number" min="100" max="4096" data-field="width"></label><label>Výška v px <input type="number" min="100" max="4096" data-field="height"></label></div>
           <div class="field"><label for="background">Okolí tabule</label><select id="background" data-field="background"><option value="transparent">Průhledné — samolepka</option><option value="solid">Barevné plátno</option></select></div>
-          <label id="background-color-wrap" class="color-inline">Barva plátna <input type="color" data-field="backgroundColor" aria-label="Barva plátna"></label>
+          <div id="background-color-wrap" class="color-field"><label for="background-hex">Barva plátna</label><div class="color-inputs"><input type="color" data-field="backgroundColor" aria-label="Barva plátna"><input id="background-hex" class="hex-input" type="text" data-hex="backgroundColor" placeholder="#ECE8DF" maxlength="7" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="hex-hint"></div></div>
           <div class="field"><label for="placement">Poloha tabule</label><select id="placement" data-field="placement"><option value="top">Nahoře</option><option value="center">Uprostřed</option><option value="bottom">Dole</option></select></div>
           <label class="range-label">Vnější odsazení <output data-output="padding"></output><input type="range" min="0" max="200" step="1" data-field="padding"></label>
           <p class="hint">Tabule se automaticky vejde do plátna. Průhledné okolí nechává destičky viditelné.</p>
         </div>
       </details>
-      <details class="control-section">
+      <details name="settings" class="control-section">
         <summary><span class="section-number">04</span> Přetočení a GIF <span class="expand" aria-hidden="true">+</span></summary>
         <div class="section-body">
           <label for="start-text">Počáteční text <span class="optional">VOLITELNÉ</span></label><textarea id="start-text" data-field="startText" rows="2" placeholder="Prázdná tabule" spellcheck="false"></textarea>
@@ -92,11 +101,7 @@
       <div class="project-actions"><button id="save-project" type="button">Uložit projekt</button><button id="import-project" type="button">Načíst projekt</button><button id="reset" type="button">Začít znovu</button><input id="project-file" type="file" accept=".json,application/json" hidden></div>
       <p class="local-note">Rozepsaná práce se ukládá jen v tomto prohlížeči. Text nikam neposíláme.</p>
     </section>
-    <section class="preview-column" aria-label="Náhled a export">
-      <div class="preview-sticky">
-        <div class="preview-heading"><span><span class="status-dot"></span> NÁHLED TABULE</span><span id="dimensions">Načítám písmo…</span></div>
-        <div class="preview-stage" id="preview-stage"><div class="stage-corner top-left" aria-hidden="true"></div><div class="stage-corner bottom-right" aria-hidden="true"></div><canvas id="preview" aria-label="Náhled pragotronu s vlastním textem" role="img"></canvas><p id="empty-note" hidden>Napiš text a tabule ožije.</p></div>
-        <div class="preview-toolbar"><button id="play" class="play-button" type="button" disabled><span aria-hidden="true">▶</span> Přehrát přetočení</button><button id="stop" class="text-button" type="button" disabled>Výsledný stav</button><span id="duration"></span></div>
+    <section class="export-column" aria-label="Stažení tabule">
         <div class="export-card"><div class="export-title"><h2>Hotovo? Vezmi si tabuli s sebou.</h2><p>PNG pro obrázek. GIF pro překlápění.</p></div>
           <div class="export-buttons"><button id="export-png" type="button" disabled><span>Stáhnout PNG</span><small>STATICKÝ OBRÁZEK ↓</small></button><button id="export-gif" type="button" disabled><span>Stáhnout GIF</span><small>ANIMOVANÁ TABULE ↓</small></button></div>
           <div id="export-progress" hidden><div class="progress-heading"><span id="progress-label">Připravuji…</span><button id="cancel-export" class="text-button" type="button">Zrušit</button></div><progress id="progress" max="100" value="0"></progress></div>
@@ -105,7 +110,6 @@
         </div>
         <details class="usage-note"><summary>Jak dostat tabuli do Stories?</summary><p>PNG můžeš použít jako obrázek nebo statický překryv. Průhledný GIF je podklad pro editor, který umí animované překryvy. Přímý import vlastního GIFu jako animované samolepky do Instagramu není zaručený.</p><p>GIF má jen plně průhledné nebo neprůhledné pixely. Pro jemné průhledné okraje použij PNG. Rámeček a destičky zůstanou neprůhledné.</p></details>
         <div class="edition-label"><span>MECHANICKÉ PÍSMO / DIGITÁLNÍ HŘIŠTĚ</span><span>EDICE 01</span></div>
-      </div>
     </section>
   </main>
   <footer><span>Pragotron · vytvořil Anlex</span><a href="https://github.com/anlexcz/pragotron" target="_blank" rel="noopener">Zdrojový kód ↗</a></footer>

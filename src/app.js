@@ -2,6 +2,7 @@ import { defaults, validateProject, reconcileRows, THEMES, FONTS, foreground, co
 import { buildScene, exportDimensions } from './scene.js';
 import { Renderer } from './renderer.js';
 import { makePalette } from './gif.js';
+import { parseHex } from './color.js';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'pragotron-project-v1';
@@ -9,6 +10,10 @@ let project = defaults(), scene, ready = false, animationId = 0, saveTimer, expo
 const preview = $('preview'), ctx = preview.getContext('2d'), renderer = new Renderer();
 const fields = [...document.querySelectorAll('[data-field]')];
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+// Keep focused controls clear of the pinned preview, including a resized mobile viewport.
+new ResizeObserver(([entry]) => {
+  document.documentElement.style.setProperty('--preview-offset', `${Math.ceil(entry.target.getBoundingClientRect().height) + 12}px`);
+}).observe(document.querySelector('.preview-column'));
 let loadNotice = '';
 try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { project = validateProject(JSON.parse(saved)); loadNotice = 'Rozepsaný projekt byl obnoven.'; } }
 catch { loadNotice = 'Uložený projekt se nepodařilo obnovit. Můžeš pokračovat s novou tabulí.'; }
@@ -51,6 +56,14 @@ function sync() {
   $('background-color-wrap').hidden = project.background !== 'solid';
   $('auto-color').checked = project.textColorMode === 'auto';
   const textColor = document.querySelector('[data-field="textColor"]'); textColor.disabled = project.textColorMode === 'auto'; textColor.value = foreground(project);
+  document.querySelectorAll('[data-hex]').forEach(input => {
+    const key = input.dataset.hex;
+    input.disabled = key === 'textColor' && project.textColorMode === 'auto';
+    if (document.activeElement !== input) {
+      input.value = key === 'textColor' ? foreground(project) : project[key];
+      input.setCustomValidity(''); input.removeAttribute('aria-invalid');
+    }
+  });
   $('font-sample').style.fontFamily = `"${FONTS[project.font].family}", sans-serif`;
   $('font-sample').style.fontWeight = project.font === 'narrow' ? '400' : '700';
   document.querySelectorAll('[data-theme]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === project.theme)));
@@ -95,6 +108,23 @@ fields.forEach(el => el.addEventListener('input', () => {
   try { project = validateProject(project); update({ rows: key === 'text' }); } catch (error) { notice(error.message, true); }
 }));
 $('auto-color').addEventListener('change', e => { project.textColorMode = e.target.checked ? 'auto' : 'custom'; if (!e.target.checked) project.textColor = foreground({ ...project, textColorMode: 'auto' }); update(); });
+document.querySelectorAll('[data-hex]').forEach(input => {
+  input.addEventListener('input', () => {
+    const color = parseHex(input.value);
+    input.setCustomValidity(''); input.removeAttribute('aria-invalid');
+    if (!color) return; // Partial edits never overwrite the last valid color.
+    const key = input.dataset.hex;
+    project[key] = color;
+    if (key === 'panelColor') project.theme = 'custom';
+    if (key === 'textColor') project.textColorMode = 'custom';
+    update();
+  });
+  input.addEventListener('blur', () => {
+    const color = parseHex(input.value);
+    if (color) { input.value = color; input.setCustomValidity(''); input.removeAttribute('aria-invalid'); }
+    else { input.setCustomValidity('Zadej HEX barvu, například #ED5E32 nebo #FFF.'); input.setAttribute('aria-invalid', 'true'); }
+  });
+});
 document.querySelectorAll('[data-theme]').forEach(button => button.addEventListener('click', () => { project.theme = button.dataset.theme; project.panelColor = THEMES[project.theme].panel; update(); }));
 $('shuffle').addEventListener('click', () => { project.seed = crypto.getRandomValues(new Uint32Array(1))[0] & 0x7fffffff; update(); play(); });
 function play() {

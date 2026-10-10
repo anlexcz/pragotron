@@ -12,3 +12,66 @@
 @media(max-width:1000px){.workspace{grid-template-columns:320px minmax(0,1fr);gap:20px}.preview-stage{padding:22px;min-height:280px;height:340px}.preview-toolbar{gap:13px;flex-wrap:wrap}.export-card{padding:19px}.export-buttons{gap:8px}.export-buttons button{padding:15px 11px}.export-buttons button span{font-size:14px}.export-buttons button small{font-size:8px}.masthead-note{font-size:9px}}
 @media(max-width:760px){.masthead{padding:17px 20px}.brand{font-size:23px}.brand-symbol{width:35px;height:40px;font-size:30px}.brand-caption{font-size:8px}.masthead-note{display:none}.intro{padding:25px 20px 22px}.intro p{font-size:12px}.workspace{display:flex;flex-direction:column;padding:0 16px 30px;gap:25px}.preview-column{order:-1}.preview-sticky{position:static}.preview-stage{height:235px;min-height:235px;padding:22px}.preview-heading{font-size:9px}.preview-toolbar{padding:12px 0;gap:14px}.play-button{padding:10px 12px;font-size:10px}#duration{font-size:9px}.export-card{margin-top:15px;padding:17px}.export-title h2{font-size:17px}.export-title p{font-size:11px}.export-buttons{margin-top:15px}.usage-note{margin-top:13px;font-size:11px}.edition-label{display:none}.editor{width:100%}.section-body{padding:0 18px 20px}.control-section>summary{padding:18px}.local-note{font-size:10px}.font-sample{font-size:17px}footer{padding:20px;font-size:9px}.preview-stage canvas{max-height:190px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* A single flow keeps the result directly above the controls. */
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1050px;
+}
+.intro { max-width: 1050px; padding-top: 24px; padding-bottom: 20px; }
+.intro h1 { font-size: 30px; }
+.preview-column {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  order: 0;
+  align-self: stretch;
+  background: var(--paper);
+  padding-top: 10px;
+  box-shadow: 0 7px 10px -10px #222a2855;
+}
+.preview-stage { height: clamp(140px, 26dvh, 230px); min-height: 0; padding: 20px; }
+.preview-stage canvas { max-height: 100%; }
+.preview-heading { margin-bottom: 8px; }
+.preview-toolbar { padding: 9px 0; gap: 16px; flex-wrap: nowrap; }
+.play-button { padding: 9px 12px; }
+.editor { width: 100%; align-self: stretch; }
+html { scroll-padding-top: var(--preview-offset, 220px); }
+.editor :is(input, textarea, select, summary) { scroll-margin-top: 12px; }
+.export-column { width: 100%; }
+.export-card { margin-top: 0; }
+.color-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.color-field { min-width: 0; margin-top: 14px; }
+.color-fields .color-field { margin-top: 0; }
+.color-inputs { display: flex; gap: 8px; align-items: center; margin-top: 7px; }
+.color-inputs input[type=color] { flex: 0 0 44px; }
+.hex-input {
+  width: 0;
+  min-width: 0;
+  max-width: 150px;
+  flex: 1;
+  padding: 8px 9px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 0;
+  font: 12px "Prago Mono", monospace;
+}
+.hex-input:disabled { opacity: .5; background: var(--paper); }
+.hex-input[aria-invalid=true] { border-color: #a02d16; }
+@media(max-width:760px) {
+  .intro { padding-top: 18px; padding-bottom: 15px; }
+  .intro h1 { font-size: 26px; }
+  .workspace { gap: 16px; }
+  .preview-stage { height: clamp(70px, 18dvh, 135px); padding: 12px 18px; }
+  .preview-toolbar { gap: 12px; }
+  .play-button { padding: 8px 10px; }
+  .preview-heading { font-size: 9px; }
+  .top-left { top: 7px; left: 7px; }
+  .bottom-right { bottom: 7px; right: 7px; }
+}
+@media(max-width:420px) {
+  .color-fields { grid-template-columns: 1fr; gap: 12px; }
+}

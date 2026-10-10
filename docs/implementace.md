@@ -63,3 +63,12 @@ Ověření jádra nepředstavuje ověření celé stránky v konkrétním prohl�
 PNG nejvýše 16 milionů pixelů a 16 384 px v každé ose. Vlastní pevné plátno 100–4096 px na osu. GIF nejvýše 500 milionů pixelových vzorků za export a 100 MiB komprimovaného výstupu. Vykreslovací cache nejvýše přibližně 8 milionů pixelů. Velké jednotlivé listy mají omezenou pracovní texturu a přepočítávají se na výslednou geometrii. Limity umožňují čitelné chybové hlášení místo pádu při extrémním textu; konkrétní rychlost záleží na zařízení.
 
 Budoucí možnosti: přesnější font podle skutečné tabule s vyřešenou licencí, video export pro hotová Stories, doložený postup pro animované samolepky. PNG i GIF už jsou součást první implementace.
+
+
+## Úprava ovládání — 10. 10. 2026
+
+Editor má jeden sloupec. Kompaktní náhled je první sekce stránky a zůstává přilepený nahoře při posouvání nastavení na desktopu i mobilu. Stažení je samostatná sekce pod nastavením. Výchozně je otevřený jen text; sekce barev, kompozice a animace se rozbalují podle potřeby a sdílejí skupinu `details name=settings`. Výška mobilního náhledu reaguje na dostupnou výšku okna. ResizeObserver nastavuje odsazení posouvání podle skutečné výšky přilepeného náhledu.
+
+Barvy destiček, textu i plátna mají vedle výběru barvy také HEX pole. Přijímá šest i tři hexadecimální číslice s volitelným #, velikost písmen nehraje roli. Krátký zápis se při dokončení rozšíří; neúplný nebo neplatný vstup nepřepisuje poslední platnou barvu. HEX textu je při automatické barvě vypnutý stejně jako barevný výběr. Ruční barva destiček přepne motiv na vlastní.
+
+Ověřeny jsou validní a neplatné HEX vstupy, struktura a unikátní ID stránky, syntaxe modulů a stávajících 18 testů. Ruční kontrola skutečného scrollování na mobilu zůstává otevřená. Publikace probíhá přes workflow GitHub Pages na https://anlexcz.github.io/pragotron/ .
